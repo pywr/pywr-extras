@@ -1,4 +1,5 @@
-from pywr.recorders import Recorder
+from pywr.recorders import Recorder, ParameterRecorder
+from ._recorders import ConstantParameterScaledRecorder, BinnedRecorder
 
 
 class MetaRecorder(Recorder):
@@ -6,9 +7,9 @@ class MetaRecorder(Recorder):
         super(MetaRecorder, self).__init__(model, **kwargs)
         self.recorders = recorders
 
-    def value(self, aggregate=True):
+    def value(self):
 
-        data = []
+        data = {}
 
         recorders = self.recorders
         if recorders is None:
@@ -21,11 +22,10 @@ class MetaRecorder(Recorder):
 
             rdata = {
                 'class': r.__class__.__name__,
-                'name': r.name
             }
 
             try:
-                rdata['value'] = r.value(aggregate=True)
+                rdata['value'] = r.aggregated_value()
             except NotImplementedError:
                 pass
 
@@ -35,11 +35,11 @@ class MetaRecorder(Recorder):
                 pass
 
             try:
-                rdata['all_values'] = list(r.value(aggregate=False))
+                rdata['all_values'] = list(r.values())
             except AttributeError:
                 pass
 
-            data.append(rdata)
+            data[r.name] = rdata
 
         return data
 
@@ -47,4 +47,6 @@ class MetaRecorder(Recorder):
 class JsonMetaRecorder(MetaRecorder):
     def value(self):
         import json
-        return json.dumps(super(JsonMetaRecorder, self).value(), indent=4)
+        return json.dumps(super(JsonMetaRecorder, self).value(), sort_keys=True,
+                          indent=4, separators=(',', ': '))
+
