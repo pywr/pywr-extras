@@ -12,6 +12,9 @@ if '--enable-profiling' in sys.argv:
 
 extensions = [
     Extension('pywr_extras._hydrology', ['pywr_extras/_hydrology.pyx']),
+    Extension('pywr_extras._parameters', ['pywr_extras/_parameters.pyx']),
+    Extension('pywr_extras._optimisation', ['pywr_extras/_optimisation.pyx']),
+    Extension('pywr_extras._recorders', ['pywr_extras/_recorders.pyx']),
 ]
 
 setup(
