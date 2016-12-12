@@ -109,7 +109,7 @@ cdef class CatchmodParameter(Parameter):
                         flow += self.outflow[k, j]
                     # Add to the total flow variable
                     # TODO it might be marginally more efficient to do these divisions once at the end.
-                    self.total_outflow[j] += flow/86.4/self._timestep
+                    self.total_outflow[j] += flow/self._timestep
             self._prev_index = ts.index
 
     cpdef double value(self, Timestep ts, ScenarioIndex scenario_index) except? -1:
@@ -209,7 +209,7 @@ cdef class OudinCatchmodParameter(Parameter):
                 if i > 0 and (index >= self.rainfall.shape[0] or index >= self.temp.shape[0]):
                     break
 
-                doy = ts.datetime.dayofyear - self._timestep + i + 1
+                doy = ts.dayofyear - self._timestep + i + 1
                 # Compute perturbed rainfall/temperature by multiplying by climate change factors
 
                 outer(self.rainfall[index, :], self.rainfall_factors[m, :], self._perturbed_rainfall)
@@ -227,7 +227,7 @@ cdef class OudinCatchmodParameter(Parameter):
                 nt += 1
             # Average flow over simulated timesteps and convert to Ml/d from m3/s
             for j in range(self.total_outflow.shape[0]):
-                self.total_outflow[j] /= 86.4*nt
+                self.total_outflow[j] /= nt
 
             self._prev_index = ts.index
 
