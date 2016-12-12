@@ -3,6 +3,7 @@
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Build import cythonize
+import numpy as np
 import sys
 
 compiler_directives = {}
@@ -11,10 +12,10 @@ if '--enable-profiling' in sys.argv:
      sys.argv.remove('--enable-profiling')
 
 extensions = [
-    Extension('pywr_extras._hydrology', ['pywr_extras/_hydrology.pyx']),
-    Extension('pywr_extras._parameters', ['pywr_extras/_parameters.pyx']),
-    Extension('pywr_extras._optimisation', ['pywr_extras/_optimisation.pyx']),
-    Extension('pywr_extras._recorders', ['pywr_extras/_recorders.pyx']),
+    Extension('pywr_extras._parameters', ['pywr_extras/_parameters.pyx'], include_dirs=[np.get_include()]),
+    Extension('pywr_extras._optimisation', ['pywr_extras/_optimisation.pyx'], include_dirs=[np.get_include()]),
+    Extension('pywr_extras._recorders', ['pywr_extras/_recorders.pyx'], include_dirs=[np.get_include()]),
+    Extension('pywr_extras._hydrology', ['pywr_extras/_hydrology.pyx'], include_dirs=[np.get_include()]),
 ]
 
 setup(
